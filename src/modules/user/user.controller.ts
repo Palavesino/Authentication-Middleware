@@ -1,6 +1,6 @@
 import { Controller, Get, Post, Body, Param, Put, Delete } from '@nestjs/common';
 import { UserService } from './user.service';
-import { User } from 'src/domain/entities/user.entity';
+import { User } from '../../domain/entities/user.entity';
 
 @Controller('users')
 export class UserController {
@@ -15,7 +15,7 @@ export class UserController {
   // GET ONE - Endpoint para obtener un usuario por ID
   @Get(':id')
   async getUserById(@Param('id') id: string): Promise<User | null> {
-    return this.userService.findOne(+id);
+    return this.userService.findOne(id);
   }
 
   // CREATE - Endpoint para crear un usuario
@@ -30,7 +30,7 @@ export class UserController {
     @Param('id') id: string,
     @Body() userData: Partial<User>,
   ): Promise<User | null> {
-    return this.userService.update(+id, userData);
+    return this.userService.update(id, userData);
   }
 
   // DELETE - Endpoint para eliminar un usuario
