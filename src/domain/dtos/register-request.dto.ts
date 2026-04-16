@@ -1,13 +1,17 @@
 import { Expose } from "class-transformer";
-import { ShortBaseDto } from "../../common/bases/base-short.dto";
+import { IsString, IsEmail, MinLength } from "class-validator";
 
-export class RegisterRequest extends ShortBaseDto {
-    @Expose()
-    name: String;
-    @Expose()
-    email: string;
-    @Expose()
-    password: string;
+export class RegisterRequestDto {
+
+  @Expose()
+  @IsString()
+  name: string;
+
+  @Expose()
+  @IsEmail()
+  email: string;
+
+  @Expose()
+  @IsString()
+  password: string;
 }
-
-

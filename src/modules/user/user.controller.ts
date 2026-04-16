@@ -1,26 +1,31 @@
 import { Controller, Get, Post, Body, Param, Put, Delete } from '@nestjs/common';
 import { UserService } from './user.service';
 import { User } from '../../domain/entities/user.entity';
+import { RegisterRequestDto } from '../../domain/dtos/register-request.dto';
+import { UserResponseDto } from '../../domain/dtos/user-response.dto';
+import { AuthRequestDto } from '../../domain/dtos/auth-request.dto';
+import { AuthResponseDto } from '../../domain/dtos/auth-response.dto';
 
 @Controller('users')
 export class UserController {
-  constructor(private readonly userService: UserService) {}
+  constructor(private readonly userService: UserService) { }
 
   // GET ALL - Endpoint para obtener todos los usuarios
   @Get()
-  async getAllUsers(): Promise<User[]> {
+  async getAllUsers(): Promise<UserResponseDto[]> {
     return this.userService.findAll();
   }
 
   // GET ONE - Endpoint para obtener un usuario por ID
   @Get(':id')
-  async getUserById(@Param('id') id: string): Promise<User | null> {
+  async getUserById(@Param('id') id: string): Promise<UserResponseDto | null> {
     return this.userService.findOne(id);
   }
 
   // CREATE - Endpoint para crear un usuario
   @Post()
-  async createUser(@Body() userData: Partial<User>): Promise<User> {
+  async createUser(@Body() userData: RegisterRequestDto): Promise<UserResponseDto> {
+    console.log("ENTRE" + JSON.stringify(userData, null, 2))
     return this.userService.create(userData);
   }
 
@@ -29,7 +34,7 @@ export class UserController {
   async updateUser(
     @Param('id') id: string,
     @Body() userData: Partial<User>,
-  ): Promise<User | null> {
+  ): Promise<UserResponseDto | null> {
     return this.userService.update(id, userData);
   }
 
@@ -38,4 +43,10 @@ export class UserController {
   async deleteUser(@Param('id') id: string): Promise<any> {
     return this.userService.remove(+id);
   }
+
+   @Post('login')
+  async login(@Body() authRequestDto: AuthRequestDto): Promise<AuthResponseDto> {
+    return await this.userService.login(authRequestDto);
+  }
+
 }

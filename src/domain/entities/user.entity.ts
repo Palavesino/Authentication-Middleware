@@ -1,16 +1,19 @@
-import { Entity, Column} from 'typeorm';
+import { Entity, Column } from 'typeorm';
 import { Base } from '../../common/bases/base.entity';
 
 @Entity('user')
 export class User extends Base {
 
   @Column()
-  nombre: string;
+  name: string;
 
   @Column({ unique: true })
   email: string;
 
   @Column()
-  edad: number;
+  password: string;
+
+  @Column({ nullable: true })
+  edad?: number;
 
 }

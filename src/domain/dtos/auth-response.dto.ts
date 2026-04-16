@@ -1,12 +1,14 @@
 
 import { Expose } from "class-transformer";
 import { ShortBaseDto } from "../../common/bases/base-short.dto";
+import { UserResponseDto } from "./user-response.dto";
 
-export class AuthResponse extends ShortBaseDto {
+export class AuthResponseDto extends ShortBaseDto {
     @Expose()
     token: String;
+
     @Expose()
-    type: string;
+    user: UserResponseDto;
 }
 
 

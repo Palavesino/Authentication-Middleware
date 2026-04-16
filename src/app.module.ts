@@ -2,7 +2,7 @@ import { Module } from '@nestjs/common';
 import { databaseProviders } from './config/database.providers';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { APP_FILTER } from '@nestjs/core';
-import { ModulesModule } from './module/module.modules';
+import { ModulesModule } from './modules/module.modules';
 import { HttpExceptionFilter } from './common/exceptions/http-exeception.filter';
 
 @Module({
