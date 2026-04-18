@@ -1,5 +1,6 @@
 import { Entity, Column } from 'typeorm';
 import { Base } from '../../common/bases/base.entity';
+import { Rol } from '../enum/rol';
 
 @Entity('user')
 export class User extends Base {
@@ -15,5 +16,8 @@ export class User extends Base {
 
   @Column({ nullable: true })
   edad?: number;
+
+  @Column({ nullable: true })
+  rol: Rol ;
 
 }

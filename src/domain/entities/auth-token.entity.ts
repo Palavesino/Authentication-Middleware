@@ -1,4 +1,4 @@
-import { Entity, Column, OneToOne, JoinColumn } from 'typeorm';
+import { Entity, Column, JoinColumn, ManyToOne } from 'typeorm';
 import { Base } from '../../common/bases/base.entity';
 import { User } from './user.entity';
 
@@ -8,7 +8,7 @@ export class AuthToken extends Base {
     @Column()
     token: string;
 
-    @OneToOne(() => User)
+    @ManyToOne(() => User)
     @JoinColumn({ name: 'id_user' })
     user: User;
 

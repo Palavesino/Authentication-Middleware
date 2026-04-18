@@ -9,6 +9,7 @@ import { UserResponseDto } from '../../domain/dtos/user-response.dto';
 import { AuthTokenService } from '../auth-token/auth-token.service';
 import { AuthRequestDto } from '../../domain/dtos/auth-request.dto';
 import { AuthResponseDto } from '../../domain/dtos/auth-response.dto';
+import { Rol } from '../../domain/enum/rol';
 
 @Injectable()
 export class UserService {
@@ -21,14 +22,13 @@ export class UserService {
   // CREATE - Crear un nuevo usuario
   async create(userData: RegisterRequestDto): Promise<UserResponseDto> {
     const saltRounds = 10;
-
-    // 🔐 hash password
     const hashedPassword = await bcrypt.hash(userData.password, saltRounds);
 
     const savedUser = await this.userRepository.save(this.userRepository.create({
       name: userData.name,
       email: userData.email,
       password: hashedPassword,
+      rol: Rol.USER
     }));
 
     // 🔄 entity → DTO
@@ -67,7 +67,7 @@ export class UserService {
     return await this.userRepository.findOneBy({ email });
   }
   // DELETE - Eliminar un usuario
-  async remove(id: number): Promise<any> {
+  async remove(id: string): Promise<any> {
     return await this.userRepository.delete(id);
   }
 

@@ -5,7 +5,6 @@ import { Repository } from 'typeorm';
 import { AuthToken } from '../../domain/entities/auth-token.entity';
 import { AuthResponseDto } from '../../domain/dtos/auth-response.dto';
 import { plainToInstance } from 'class-transformer';
-import { UserResponseDto } from '../../domain/dtos/user-response.dto';
 import { User } from '../../domain/entities/user.entity';
 
 @Injectable()
@@ -20,6 +19,7 @@ export class AuthTokenService {
     const token = this.jwtService.sign({
       sub: user.id,
       email: user.email,
+      rol: user.rol
     });
     const authToken = this.tokenRepository.create({
       token,
@@ -31,26 +31,6 @@ export class AuthTokenService {
     });
   }
 
-
-  async validateToken(token: string): Promise<UserResponseDto> {
-    try {
-      this.jwtService.verify(token);
-      const tokenInDb = await this.tokenRepository.findOne({
-        where: { token },
-        relations: ['user'],
-      });
-
-      if (!tokenInDb) {
-        throw new UnauthorizedException('Token no válido');
-      }
-
-      return plainToInstance(UserResponseDto, tokenInDb.user, {
-        excludeExtraneousValues: true,
-      });
-    } catch (error) {
-      throw new UnauthorizedException('Token inválido o expirado');
-    }
-  }
 
   // async removeToken(token?: string, user?: User) {
   //   if (token) {
