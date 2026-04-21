@@ -31,7 +31,6 @@ export class UserService {
       rol: Rol.USER
     }));
 
-    // 🔄 entity → DTO
     return plainToInstance(UserResponseDto, savedUser, {
       excludeExtraneousValues: true,
     });

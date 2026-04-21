@@ -6,6 +6,7 @@ import { AuthToken } from '../../domain/entities/auth-token.entity';
 import { AuthResponseDto } from '../../domain/dtos/auth-response.dto';
 import { plainToInstance } from 'class-transformer';
 import { User } from '../../domain/entities/user.entity';
+import { UserResponseDto } from '../../domain/dtos/user-response.dto';
 
 @Injectable()
 export class AuthTokenService {
@@ -15,22 +16,30 @@ export class AuthTokenService {
     private tokenRepository: Repository<AuthToken>,
   ) { }
 
-  async generateToken(user: User): Promise<AuthResponseDto> {
-    const token = this.jwtService.sign({
-      sub: user.id,
-      email: user.email,
-      rol: user.rol
-    });
-    const authToken = this.tokenRepository.create({
-      token,
-      user,
-    });
-    await this.tokenRepository.save(authToken);
-    return plainToInstance(AuthResponseDto, { token }, {
-      excludeExtraneousValues: true,
-    });
-  }
-
+async generateToken(user: User): Promise<AuthResponseDto> {
+  const token = this.jwtService.sign({
+    sub: user.id,
+    email: user.email,
+    rol: user.rol
+  }, { expiresIn: '15m' });
+  
+  const authToken = this.tokenRepository.create({
+    token,
+    user,
+  });
+  await this.tokenRepository.save(authToken);
+  
+  const userDto = plainToInstance(UserResponseDto, user, {
+    excludeExtraneousValues: true,
+  });
+  
+  return plainToInstance(AuthResponseDto, { 
+    token,
+    user: userDto
+  }, {
+    excludeExtraneousValues: true,
+  });
+}
 
   // async removeToken(token?: string, user?: User) {
   //   if (token) {

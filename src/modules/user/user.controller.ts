@@ -19,7 +19,11 @@ export class UserController {
   async login(@Body() authRequestDto: AuthRequestDto): Promise<AuthResponseDto> {
     return await this.userService.login(authRequestDto);
   }
-
+  @Post('logout')
+  async logout(@Body('userId') userId: string): Promise<{ message: string }> {
+    return await this.userService.logout(userId);
+  }
+  
   @Get('admin-only')
   @Roles(Rol.ADMIN)
   async adminOnly() {

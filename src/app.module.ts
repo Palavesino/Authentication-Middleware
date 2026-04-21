@@ -1,6 +1,6 @@
 // app.module.ts
 import { Module, NestModule, MiddlewareConsumer, RequestMethod } from '@nestjs/common';
-import { JwtModule } from '@nestjs/jwt';  // ✅ Importar JwtModule
+import { JwtModule } from '@nestjs/jwt'; 
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { APP_FILTER } from '@nestjs/core';
 import { databaseProviders } from './config/database.providers';
@@ -15,7 +15,7 @@ import { AuthToken } from './domain/entities/auth-token.entity';
     TypeOrmModule.forFeature([AuthToken]),  
     JwtModule.register({ 
       secret: process.env.JWT_SECRET,
-      signOptions: { expiresIn: '3d' },
+      signOptions: { expiresIn: '7d' },
     }),
     ModulesModule,
   ],
