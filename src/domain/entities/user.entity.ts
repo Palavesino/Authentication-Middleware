@@ -15,7 +15,16 @@ export class User extends Base {
   password: string;
 
   @Column({ nullable: true })
-  edad?: number;
+  age?: number;
+  
+  @Column({ nullable: true })
+  phone?: string;
+  
+  @Column({ nullable: true })
+  address?: string;
+
+  @Column({ nullable: true })
+  imageUrl?: string;
 
   @Column({ nullable: true })
   rol: Rol ;

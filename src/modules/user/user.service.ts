@@ -10,6 +10,7 @@ import { AuthTokenService } from '../auth-token/auth-token.service';
 import { AuthRequestDto } from '../../domain/dtos/auth-request.dto';
 import { AuthResponseDto } from '../../domain/dtos/auth-response.dto';
 import { Rol } from '../../domain/enum/rol';
+import { CompleteUserResponseDto } from '../../domain/dtos/complete-user-response';
 
 @Injectable()
 export class UserService {
@@ -48,16 +49,16 @@ export class UserService {
     const user = await this.userRepository.findOneBy({ id });
     if (!user) return null;
 
-    return plainToInstance(UserResponseDto, user, {
+    return plainToInstance(CompleteUserResponseDto, user, {
       excludeExtraneousValues: true,
     });
   }
 
   // UPDATE - Actualizar un usuario
-  async update(id: string, userData: Partial<User>): Promise<UserResponseDto | null> {
+  async update(id: string, userData: Partial<User>): Promise<CompleteUserResponseDto | null> {
     await this.userRepository.update(id, userData);
     const updatedUser = await this.findOne(id);
-    return plainToInstance(UserResponseDto, updatedUser, {
+    return plainToInstance(CompleteUserResponseDto, updatedUser, {
       excludeExtraneousValues: true,
     });
   }
