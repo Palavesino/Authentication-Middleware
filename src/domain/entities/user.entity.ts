@@ -13,13 +13,15 @@ export class User extends Base {
 
   @Column()
   password: string;
+  @Column({ nullable: true })
+  blocked: boolean = false;
 
   @Column({ nullable: true })
   age?: number;
-  
+
   @Column({ nullable: true })
   phone?: string;
-  
+
   @Column({ nullable: true })
   address?: string;
 
@@ -27,6 +29,7 @@ export class User extends Base {
   imageUrl?: string;
 
   @Column({ nullable: true })
-  rol: Rol ;
+  rol: Rol;
+
 
 }

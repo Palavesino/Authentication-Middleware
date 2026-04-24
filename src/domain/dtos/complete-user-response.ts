@@ -1,7 +1,7 @@
 import { Expose } from "class-transformer";
 import { ShortBaseDto } from "../../common/bases/base-short.dto";
 import { Rol } from "../enum/rol";
-import { IsEmail, IsNumber, IsOptional, IsString } from "class-validator";
+import { IsBoolean, IsEmail, IsNumber, IsOptional, IsString } from "class-validator";
 export class CompleteUserResponseDto extends ShortBaseDto {
     @Expose()
     @IsString()
@@ -30,6 +30,10 @@ export class CompleteUserResponseDto extends ShortBaseDto {
     @IsOptional()
     @IsNumber()
     age?: number;
+
+    @Expose()
+    @IsBoolean()
+    blocked: boolean; 
 
     @Expose()
     rol: Rol;

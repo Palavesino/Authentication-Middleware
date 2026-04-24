@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Body, Param, Put, Delete, UseGuards } from '@nestjs/common';
+import { Controller, Get, Post, Body, Param, Put, Delete, UseGuards, Patch } from '@nestjs/common';
 import { UserService } from './user.service';
 import { User } from '../../domain/entities/user.entity';
 import { RegisterRequestDto } from '../../domain/dtos/register-request.dto';
@@ -20,10 +20,11 @@ export class UserController {
     return await this.userService.login(authRequestDto);
   }
   @Post('logout')
+  @Roles(Rol.ADMIN, Rol.USER)
   async logout(@Body('userId') userId: string): Promise<{ message: string }> {
     return await this.userService.logout(userId);
   }
-  
+
   @Get('admin-only')
   @Roles(Rol.ADMIN)
   async adminOnly() {
@@ -49,6 +50,7 @@ export class UserController {
   }
   // GET ALL - Endpoint para obtener todos los usuarios
   @Get()
+  @Roles(Rol.ADMIN)
   async getAllUsers(): Promise<UserResponseDto[]> {
     return this.userService.findAll();
   }
@@ -62,11 +64,13 @@ export class UserController {
 
   // GET ONE - Endpoint para obtener un usuario por ID
   @Get(':id')
+  @Roles(Rol.ADMIN, Rol.USER)
   async getUserById(@Param('id') id: string): Promise<UserResponseDto | null> {
     return this.userService.findOne(id);
   }
   // UPDATE - Endpoint para actualizar un usuario
   @Put(':id')
+  @Roles(Rol.ADMIN, Rol.USER)
   async updateUser(
     @Param('id') id: string,
     @Body() userData: Partial<User>,
@@ -74,8 +78,27 @@ export class UserController {
     return this.userService.update(id, userData);
   }
 
+  @Patch(':id/rol')
+  @Roles(Rol.ADMIN)
+  async updateRol(
+    @Param('id') id: string,
+    @Body('rol') rol: Rol,
+  ): Promise<UserResponseDto | null> {
+    return this.userService.updateRol(id, rol);
+  }
+
+  @Patch(':id/blocked')
+  @Roles(Rol.ADMIN)
+  async updateBlocked(
+    @Param('id') id: string,
+    @Body('blocked') blocked: boolean,
+  ): Promise<UserResponseDto | null> {
+    return this.userService.updateBlocked(id, blocked);
+  }
+
   // DELETE - Endpoint para eliminar un usuario
   @Delete(':id')
+  @Roles(Rol.ADMIN)
   async deleteUser(@Param('id') id: string): Promise<any> {
     return this.userService.remove(id);
   }

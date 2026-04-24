@@ -20,7 +20,6 @@ export class UserService {
     private authTokenService: AuthTokenService,
   ) { }
 
-  // CREATE - Crear un nuevo usuario
   async create(userData: RegisterRequestDto): Promise<UserResponseDto> {
     const saltRounds = 10;
     const hashedPassword = await bcrypt.hash(userData.password, saltRounds);
@@ -37,14 +36,12 @@ export class UserService {
     });
   }
 
-  // GET ALL - Obtener todos los usuarios
   async findAll(): Promise<UserResponseDto[]> {
     const users = await this.userRepository.find();
     return plainToInstance(UserResponseDto, users, {
       excludeExtraneousValues: true,
     });
   }
-  // GET ONE - Obtener un usuario por ID
   async findOne(id: string): Promise<UserResponseDto | null> {
     const user = await this.userRepository.findOneBy({ id });
     if (!user) return null;
@@ -54,7 +51,6 @@ export class UserService {
     });
   }
 
-  // UPDATE - Actualizar un usuario
   async update(id: string, userData: Partial<User>): Promise<CompleteUserResponseDto | null> {
     await this.userRepository.update(id, userData);
     const updatedUser = await this.findOne(id);
@@ -62,11 +58,25 @@ export class UserService {
       excludeExtraneousValues: true,
     });
   }
-  // user.service.ts
+
+  async updateRol(id: string, rol: Rol): Promise<CompleteUserResponseDto | null> {
+    await this.userRepository.update(id, { rol });
+    const updatedUser = await this.findOne(id);
+    return plainToInstance(UserResponseDto, updatedUser, {
+      excludeExtraneousValues: true,
+    });
+  }
+
+  async updateBlocked(id: string, blocked: boolean): Promise<UserResponseDto | null> {
+    await this.userRepository.update(id, { blocked });
+    const updatedUser = await this.findOne(id);
+    return plainToInstance(UserResponseDto, updatedUser, {
+      excludeExtraneousValues: true,
+    });
+  }
   async findByEmail(email: string): Promise<User | null> {
     return await this.userRepository.findOneBy({ email });
   }
-  // DELETE - Eliminar un usuario
   async remove(id: string): Promise<any> {
     return await this.userRepository.delete(id);
   }
