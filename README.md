@@ -1,98 +1,273 @@
-<p align="center">
-  <a href="http://nestjs.com/" target="blank"><img src="https://nestjs.com/img/logo-small.svg" width="120" alt="Nest Logo" /></a>
-</p>
+# Authentication Middleware
 
-[circleci-image]: https://img.shields.io/circleci/build/github/nestjs/nest/master?token=abc123def456
-[circleci-url]: https://circleci.com/gh/nestjs/nest
+Backend desarrollado con **NestJS + TypeScript + TypeORM + PostgreSQL** que funciona como middleware de autenticación y autorización para la gestión de usuarios.
 
-  <p align="center">A progressive <a href="http://nodejs.org" target="_blank">Node.js</a> framework for building efficient and scalable server-side applications.</p>
-    <p align="center">
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/v/@nestjs/core.svg" alt="NPM Version" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/l/@nestjs/core.svg" alt="Package License" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/dm/@nestjs/common.svg" alt="NPM Downloads" /></a>
-<a href="https://circleci.com/gh/nestjs/nest" target="_blank"><img src="https://img.shields.io/circleci/build/github/nestjs/nest/master" alt="CircleCI" /></a>
-<a href="https://discord.gg/G7Qnnhy" target="_blank"><img src="https://img.shields.io/badge/discord-online-brightgreen.svg" alt="Discord"/></a>
-<a href="https://opencollective.com/nest#backer" target="_blank"><img src="https://opencollective.com/nest/backers/badge.svg" alt="Backers on Open Collective" /></a>
-<a href="https://opencollective.com/nest#sponsor" target="_blank"><img src="https://opencollective.com/nest/sponsors/badge.svg" alt="Sponsors on Open Collective" /></a>
-  <a href="https://paypal.me/kamilmysliwiec" target="_blank"><img src="https://img.shields.io/badge/Donate-PayPal-ff3f59.svg" alt="Donate us"/></a>
-    <a href="https://opencollective.com/nest#sponsor"  target="_blank"><img src="https://img.shields.io/badge/Support%20us-Open%20Collective-41B883.svg" alt="Support us"></a>
-  <a href="https://twitter.com/nestframework" target="_blank"><img src="https://img.shields.io/twitter/follow/nestframework.svg?style=social&label=Follow" alt="Follow us on Twitter"></a>
-</p>
-  <!--[![Backers on Open Collective](https://opencollective.com/nest/backers/badge.svg)](https://opencollective.com/nest#backer)
-  [![Sponsors on Open Collective](https://opencollective.com/nest/sponsors/badge.svg)](https://opencollective.com/nest#sponsor)-->
+## 🚀 Demo
 
-## Description
+Frontend asociado: [https://authentication-front-end.vercel.app/](https://authentication-front-end.vercel.app/)
 
-[Nest](https://github.com/nestjs/nest) framework TypeScript starter repository.
+## 📋 Características
 
-## Project setup
+### 🔐 Autenticación
+- Login con JWT
+- Registro de usuarios
+- Logout con invalidación de tokens
+- Middleware de autenticación personalizado
+- Protección de rutas por roles
 
-```bash
-$ npm install
+### 👥 Gestión de Usuarios
+- CRUD completo de usuarios
+- Actualización de roles (solo ADMIN)
+- Bloqueo/Desbloqueo de cuentas (solo ADMIN)
+- Búsqueda de usuario por ID
+
+### 🛡️ Seguridad
+- JWT con expiración
+- Tokens almacenados en BD para invalidación
+- Passwords hasheados con bcrypt
+- Guards personalizados (AuthMiddleware + RolesGuard)
+- Variables de entorno para configuración sensible
+
+## 🛠️ Tecnologías
+
+| Tecnología | Versión | Propósito |
+|------------|---------|-----------|
+| NestJS | 11.x | Framework backend |
+| TypeScript | 5.x | Tipado estático |
+| TypeORM | 0.3.x | ORM para base de datos |
+| PostgreSQL | - | Base de datos relacional |
+| JWT | 9.x | Tokens de autenticación |
+| bcrypt | 6.x | Hashing de contraseñas |
+| class-validator | 0.15.x | Validación de DTOs |
+
+## 📁 Estructura del Proyecto
+
+```
+src/
+├── auth/
+│   ├── middleware/
+│   │   └── auth.middleware.ts    # Middleware de autenticación
+│   └── guards/
+│       └── roles.guard.ts         # Guard de roles
+├── users/
+│   ├── dto/                       # Data Transfer Objects
+│   ├── entities/
+│   │   ├── user.entity.ts         # Entidad User
+│   │   └── auth-token.entity.ts   # Entidad AuthToken
+│   ├── users.controller.ts        # Controlador de usuarios
+│   └── users.service.ts           # Lógica de negocio
+├── common/
+│   └── decorators/
+│       └── roles.decorator.ts     # Decorador @Roles()
+├── config/
+│   └── database.config.ts         # Configuración de BD
+└── main.ts                        # Punto de entrada
 ```
 
-## Compile and run the project
+## 👥 Roles y Permisos
 
-```bash
-# development
-$ npm run start
+| Rol | Permisos |
+|-----|----------|
+| **ADMIN** | • CRUD completo de usuarios<br>• Cambiar roles<br>• Bloquear/Desbloquear usuarios<br>• Acceso a todas las rutas protegidas |
+| **USER** | • Ver y editar su propio perfil<br>• Acceso a rutas de usuario |
+| **Visitante** | • Solo login y registro |
 
-# watch mode
-$ npm run start:dev
+## 🔐 Decorador @Roles()
 
-# production mode
-$ npm run start:prod
+```typescript
+@Post('logout')
+@Roles(Rol.ADMIN, Rol.USER)  // Permite ADMIN y USER
+async logout(@Body('userId') userId: string) {
+    return await this.userService.logout(userId);
+}
+
+@Get('admin-only')
+@Roles(Rol.ADMIN)  // Solo ADMIN
+async adminOnly() {
+    return 'Solo admins';
+}
 ```
 
-## Run tests
+## 🔧 Instalación
 
 ```bash
-# unit tests
-$ npm run test
+# Clonar el repositorio
+git clone https://github.com/Palavesino/Authentication-Middleware
+cd Authentication-Middleware
 
-# e2e tests
-$ npm run test:e2e
+# Instalar dependencias
+npm install
 
-# test coverage
-$ npm run test:cov
+# Configurar variables de entorno (ver sección abajo)
+cp .env.example .env
+
+# Ejecutar migraciones (si aplica)
+npm run typeorm:run
+
+# Iniciar en modo desarrollo
+npm run start:dev
+
+# Build para producción
+npm run build
+
+# Iniciar en producción
+npm run start:prod
 ```
 
-## Deployment
+## 🗄️ Variables de Entorno
 
-When you're ready to deploy your NestJS application to production, there are some key steps you can take to ensure it runs as efficiently as possible. Check out the [deployment documentation](https://docs.nestjs.com/deployment) for more information.
+```env
+# Neon PostgreSQL (Producción/Desarrollo)
+HOST=ep-round-mud-ainbplda-pooler.c-4.us-east-1.aws.neon.tech
+DB_PORT=5432
+DB_NAME=neondb
+DB_USERNAME=neondb_owner
+DB_PASSWORD=tu_password
+NODE_ENV=development
 
-If you are looking for a cloud-based platform to deploy your NestJS application, check out [Mau](https://mau.nestjs.com), our official platform for deploying NestJS applications on AWS. Mau makes deployment straightforward and fast, requiring just a few simple steps:
-
-```bash
-$ npm install -g mau
-$ mau deploy
+# JWT
+JWT_SECRET=pepe1234
 ```
 
-With Mau, you can deploy your application in just a few clicks, allowing you to focus on building features rather than managing infrastructure.
+> ⚠️ **Nota:** El SSL se maneja automáticamente con `sslmode=require` en la URL de conexión.
 
-## Resources
+## 🔗 API Endpoints
 
-Check out a few resources that may come in handy when working with NestJS:
+### Autenticación
 
-- Visit the [NestJS Documentation](https://docs.nestjs.com) to learn more about the framework.
-- For questions and support, please visit our [Discord channel](https://discord.gg/G7Qnnhy).
-- To dive deeper and get more hands-on experience, check out our official video [courses](https://courses.nestjs.com/).
-- Deploy your application to AWS with the help of [NestJS Mau](https://mau.nestjs.com) in just a few clicks.
-- Visualize your application graph and interact with the NestJS application in real-time using [NestJS Devtools](https://devtools.nestjs.com).
-- Need help with your project (part-time to full-time)? Check out our official [enterprise support](https://enterprise.nestjs.com).
-- To stay in the loop and get updates, follow us on [X](https://x.com/nestframework) and [LinkedIn](https://linkedin.com/company/nestjs).
-- Looking for a job, or have a job to offer? Check out our official [Jobs board](https://jobs.nestjs.com).
+| Método | Endpoint | Descripción | Acceso |
+|--------|----------|-------------|--------|
+| POST | `/users/login` | Inicio de sesión | Público |
+| POST | `/users/register` | Registro de usuario | Público |
+| POST | `/users/logout` | Cierre de sesión | ADMIN / USER |
 
-## Support
+### Usuarios (CRUD)
 
-Nest is an MIT-licensed open source project. It can grow thanks to the sponsors and support by the amazing backers. If you'd like to join them, please [read more here](https://docs.nestjs.com/support).
+| Método | Endpoint | Descripción | Acceso |
+|--------|----------|-------------|--------|
+| GET | `/users` | Listar todos los usuarios | Solo ADMIN |
+| GET | `/users/:id` | Obtener usuario por ID | ADMIN / USER |
+| PUT | `/users/:id` | Actualizar usuario | ADMIN / USER |
+| DELETE | `/users/:id` | Eliminar usuario | Solo ADMIN |
 
-## Stay in touch
+### Administración
 
-- Author - [Kamil Myśliwiec](https://twitter.com/kammysliwiec)
-- Website - [https://nestjs.com](https://nestjs.com/)
-- Twitter - [@nestframework](https://twitter.com/nestframework)
+| Método | Endpoint | Descripción | Acceso |
+|--------|----------|-------------|--------|
+| PATCH | `/users/:id/rol` | Actualizar rol | Solo ADMIN |
+| PATCH | `/users/:id/blocked` | Bloquear/Desbloquear | Solo ADMIN |
 
-## License
+### Endpoints de Prueba
 
-Nest is [MIT licensed](https://github.com/nestjs/nest/blob/master/LICENSE).
+| Método | Endpoint | Descripción | Acceso |
+|--------|----------|-------------|--------|
+| GET | `/users/admin-only` | Ruta solo administradores | Solo ADMIN |
+| GET | `/users/user-only` | Ruta solo usuarios | Solo USER |
+| GET | `/users/user-and-admin` | Ruta para ADMIN y USER | ADMIN / USER |
+| GET | `/users/public` | Ruta pública | Público |
+
+## 📦 Entidades
+
+### User
+
+```typescript
+{
+  id: string;           // UUID
+  name: string;         // Nombre completo
+  email: string;        // Email único
+  password: string;     // Hash de bcrypt
+  rol: Rol;            // ADMIN | USER | VIEWER
+  blocked: boolean;     // true = bloqueado
+  createdAt: Date;
+  updatedAt: Date;
+}
+```
+
+### AuthToken
+
+```typescript
+{
+  id: string;           // UUID
+  token: string;        // JWT token
+  user: User;           // Relación con usuario
+  createdAt: Date;
+}
+```
+
+## 🧪 Middleware de Autenticación
+
+```typescript
+// Ejemplo de cómo se adjunta el usuario a la request
+export interface AuthenticatedRequest extends Request {
+    user?: {
+        id: string;
+        email: string;
+        rol: Rol;
+    };
+}
+```
+
+## 🛡️ Guards Implementados
+
+### AuthMiddleware
+- Verifica token JWT en header `Authorization: Bearer <token>`
+- Valida que el token exista en BD (no haya sido invalidado)
+- Adjunta usuario a `req.user` si el token es válido
+
+### RolesGuard
+- Verifica que el usuario tenga el rol requerido
+- Usa el decorador `@Roles()` para definir roles permitidos
+- Lanza `ForbiddenException` si no tiene permisos
+
+## 📦 Scripts Disponibles
+
+```json
+{
+  "start:dev": "Modo desarrollo con hot reload",
+  "start:prod": "Modo producción",
+  "build": "Build del proyecto",
+  "test": "Ejecutar tests",
+  "lint": "Lintear código"
+}
+```
+
+## 🚀 Deploy
+
+El proyecto está configurado para desplegarse en:
+- **Render** / **Railway** / **Vercel** (backend compatible)
+- Base de datos PostgreSQL en **Neon**
+
+## 📦 Dependencias Principales
+
+```json
+{
+  "@nestjs/common": "^11.0.1",
+  "@nestjs/core": "^11.0.1",
+  "@nestjs/jwt": "^11.0.2",
+  "@nestjs/typeorm": "^11.0.0",
+  "bcrypt": "^6.0.0",
+  "class-transformer": "^0.5.1",
+  "class-validator": "^0.15.1",
+  "dotenv": "^17.3.1",
+  "jsonwebtoken": "^9.0.3",
+  "pg": "^8.19.0",
+  "typeorm": "^0.3.28"
+}
+```
+
+## 👨‍💻 Autor
+
+**Palavesino** - [GitHub](https://github.com/Palavesino)
+
+## 🔗 Repositorios
+
+- [Backend](https://github.com/Palavesino/Authentication-Middleware)
+- [Frontend](https://github.com/Palavesino/Authentication-Frontend)
+
+## ⚠️ Nota
+
+Las variables de entorno no están incluidas por seguridad. Debes crear tu propio archivo `.env` con tus credenciales de base de datos.
+
+---
+
+⭐ Si te gustó el proyecto, ¡no olvides darle una estrella!
